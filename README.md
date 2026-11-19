@@ -53,3 +53,15 @@ PesaAI is an AI-powered personal and business financial intelligence platform. I
 ## Product principles
 
 PesaAI is a financial information and planning tool. It does not guarantee investment returns, diagnose fraud with certainty, provide regulated investment advice, or make lending decisions.
+
+
+## Real AI assistant setup (free provider)
+
+The assistant analyses only the selected personal, business or combined records. A Supabase Edge Function verifies the signed-in user and reads data through that user's RLS policies. The AI secret is kept server-side.
+
+1. Deploy `supabase/functions/pesaai-assistant/index.ts` from Supabase **Edge Functions**.
+2. Add `GROQ_API_KEY` in Edge Function secrets using a free GroqCloud API key. This is not an OpenAI key; no paid OpenAI API key or compulsory OpenAI billing is required. Groq free usage has limits.
+3. Ensure the standard `SUPABASE_URL` and `SUPABASE_ANON_KEY` Edge Function environment variables are available.
+4. Redeploy the function, sign in, open **AI assistant**, choose the data scope and ask a question.
+
+**Privacy:** Selected transaction descriptions, amounts, dates, currencies, budgets, savings goals and debts are sent to Groq for the response. Do not enter PINs, passwords or full account numbers. Review Groq's current data terms before using sensitive real financial data. Free limits can change or be exhausted; this is suitable for prototyping and early testing, not unlimited production. AI can make mistakes; verify important decisions.
