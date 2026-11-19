@@ -191,7 +191,7 @@ do $$
 declare t text;
 begin
   foreach t in array array[
-    'pa_profiles','pa_financial_spaces','pa_business_profiles','pa_transactions',
+    'pa_financial_spaces','pa_business_profiles','pa_transactions',
     'pa_transfers','pa_budgets','pa_savings_goals','pa_debts','pa_financial_scores',
     'pa_financial_twins','pa_simulations','pa_life_goals','pa_family_members',
     'pa_alerts','pa_ai_conversations','pa_ai_messages'
@@ -205,6 +205,15 @@ begin
     execute format('grant select, insert, update, delete on public.%I to authenticated', t);
   end loop;
 end $$;
+
+-- Profiles use id as their ownership key (all other tables use user_id).
+alter table public.pa_profiles enable row level security;
+drop policy if exists pa_profiles_own on public.pa_profiles;
+create policy pa_profiles_own on public.pa_profiles
+  for all to authenticated
+  using (id = auth.uid())
+  with check (id = auth.uid());
+grant select, insert, update, delete on public.pa_profiles to authenticated;
 
 -- Profile and default financial spaces are provisioned on first account creation.
 create or replace function public.pa_handle_new_user()
