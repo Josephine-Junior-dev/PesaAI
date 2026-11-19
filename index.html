@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b2d">
+  <meta name="description" content="PesaAI is your personal and business financial intelligence companion. Understand, protect, plan and grow.">
+  <title>PesaAI — Your Money. Your Business. Your Future.</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+  <section id="authScreen" class="auth-shell">
+    <div class="auth-brand">
+      <a class="brand" href="#"><span class="brand-mark">P</span><span>Pesa<span class="brand-accent">AI</span></span></a>
+      <div class="auth-message">
+        <span class="eyebrow">FINANCIAL INTELLIGENCE, REIMAGINED</span>
+        <h1>Your money.<br><em>Your business.</em><br>Your future.</h1>
+        <p>Understand your complete financial life, make informed decisions and build a stronger tomorrow.</p>
+        <div class="auth-points"><span>✦ Personal + business finance</span><span>✦ AI-powered financial insights</span><span>✦ One clear view of your future</span></div>
+      </div>
+      <div class="auth-foot">PRIVATE BY DESIGN · BUILT FOR A GLOBAL WORLD</div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="mobile-brand brand"><span class="brand-mark">P</span><span>Pesa<span class="brand-accent">AI</span></span></div>
+        <div class="auth-tabs"><button class="auth-tab active" data-auth-tab="signin">Sign in</button><button class="auth-tab" data-auth-tab="signup">Create account</button></div>
+        <div id="signinForm">
+          <span class="eyebrow">WELCOME BACK</span><h2>Good to see you.</h2><p class="muted">Sign in to continue to your financial workspace.</p>
+          <form id="loginForm" class="form-stack">
+            <label>Email address<input type="email" id="loginEmail" autocomplete="email" placeholder="you@example.com" required></label>
+            <label>Password<input type="password" id="loginPassword" autocomplete="current-password" placeholder="Enter your password" required></label>
+            <button class="btn btn-primary btn-full" type="submit">Sign in <span>→</span></button>
+          </form>
+          <button class="text-button" id="forgotPassword">Forgot password?</button>
+        </div>
+        <div id="signupForm" class="hidden">
+          <span class="eyebrow">START WITH CLARITY</span><h2>Create your account.</h2><p class="muted">Your personal and business finances, organised in one place.</p>
+          <form id="registerForm" class="form-stack">
+            <label>Full name<input type="text" id="signupName" autocomplete="name" placeholder="Your full name" required></label>
+            <label>Email address<input type="email" id="signupEmail" autocomplete="email" placeholder="you@example.com" required></label>
+            <label>Password<input type="password" id="signupPassword" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required></label>
+            <label>Preferred currency<select id="signupCurrency"><option value="KES">KES — Kenyan Shilling</option><option value="USD">USD — US Dollar</option><option value="GBP">GBP — British Pound</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="NGN">NGN — Nigerian Naira</option><option value="ZAR">ZAR — South African Rand</option></select></label>
+            <button class="btn btn-primary btn-full" type="submit">Create secure account <span>→</span></button>
+          </form>
+        </div>
+        <p class="auth-legal">By continuing, you agree to use PesaAI responsibly. Your financial data is private to your account.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand sidebar-brand" href="#"><span class="brand-mark">P</span><span>Pesa<span class="brand-accent">AI</span></span></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="main-nav">
+        <button class="nav-link active" data-page="overview"><span>▦</span> Overview</button>
+        <div class="nav-caption">YOUR MONEY</div>
+        <button class="nav-link" data-page="personal"><span>◉</span> Personal finance</button>
+        <button class="nav-link" data-page="business"><span>▣</span> Business finance</button>
+        <button class="nav-link" data-page="transactions"><span>↕</span> Transactions</button>
+        <button class="nav-link" data-page="budgets"><span>◫</span> Budgets</button>
+        <button class="nav-link" data-page="goals"><span>◎</span> Savings & goals</button>
+        <button class="nav-link" data-page="debts"><span>⇄</span> Debt manager</button>
+        <div class="nav-caption">INTELLIGENCE</div>
+        <button class="nav-link" data-page="assistant"><span>✧</span> AI assistant <i class="soon">AI</i></button>
+        <button class="nav-link" data-page="health"><span>♡</span> Financial health</button>
+        <button class="nav-link" data-page="twin"><span>◈</span> Financial twin</button>
+        <button class="nav-link" data-page="simulator"><span>⌁</span> Future simulator</button>
+        <button class="nav-link" data-page="guardian"><span>⬡</span> Financial guardian</button>
+        <div class="nav-caption">MORE</div>
+        <button class="nav-link" data-page="reports"><span>▤</span> Reports</button>
+        <button class="nav-link" data-page="settings"><span>⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="secure-note"><span>✦</span><div><b>Your money stays yours</b><small>Private account · Secure access</small></div></div><button id="signOutBtn" class="signout"><span>↪</span> Sign out</button></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar"><button id="menuToggle" class="icon-btn menu-toggle" aria-label="Open menu">☰</button><div class="breadcrumb">Workspace <span>/</span> <b id="pageTitle">Overview</b></div><div class="top-actions"><span class="live-indicator"><i></i> Your workspace</span><button class="currency-pill" id="currencyDisplay">KES ▾</button><button class="avatar" id="profileAvatar" aria-label="Account menu">U</button><div id="profileMenu" class="profile-menu hidden"><div id="profileEmail" class="profile-email"></div><button id="profileSignOut">Sign out</button></div></div></header>
+      <div class="page-wrap">
+        <section id="page-overview" class="page active">
+          <div class="welcome-row"><div><span class="eyebrow">YOUR FINANCIAL COMMAND CENTRE</span><h1>Welcome back, <span id="welcomeName">there</span>.</h1><p class="muted">A clearer picture of your money starts here.</p></div><button class="btn btn-primary" data-action="add-transaction">＋ Add transaction</button></div>
+          <div class="space-switcher"><button class="space-chip active" data-space="all">◈ Combined view</button><button class="space-chip" data-space="personal">◉ Personal</button><button class="space-chip" data-space="business">▣ Business</button><span class="space-hint">Switch views without mixing your records</span></div>
+          <div class="metric-grid">
+            <article class="metric-card"><div class="metric-top"><span>Total income</span><span class="metric-icon green">↗</span></div><strong id="totalIncome">—</strong><small>Recorded income</small></article>
+            <article class="metric-card"><div class="metric-top"><span>Total expenses</span><span class="metric-icon coral">↘</span></div><strong id="totalExpenses">—</strong><small>Recorded expenses</small></article>
+            <article class="metric-card"><div class="metric-top"><span>Net cash flow</span><span class="metric-icon blue">⌁</span></div><strong id="netFlow">—</strong><small>Income less expenses</small></article>
+            <article class="metric-card score-card"><div class="metric-top"><span>Financial Life Score</span><span class="metric-icon purple">✦</span></div><strong><span id="lifeScore">—</span><small class="score-outof">/ 100</small></strong><small id="scoreCaption">Build your financial picture</small></article>
+          </div>
+          <div class="content-grid">
+            <article class="panel chart-panel"><div class="panel-heading"><div><h3>Cash flow overview</h3><p>Income and expenses from your records</p></div><span class="panel-tag">This month</span></div><div class="chart-wrap"><canvas id="cashFlowChart"></canvas><div id="chartEmpty" class="chart-empty">Add transactions to see your cash flow.</div></div></article>
+            <article class="panel twin-card"><div class="panel-heading"><div><h3>Your Financial Twin</h3><p>A living picture of your finances</p></div><span class="twin-symbol">◈</span></div><div class="twin-visual"><div class="twin-orbit orbit-one"></div><div class="twin-orbit orbit-two"></div><div class="twin-core">P<span>AI</span></div></div><h4 id="twinStatus">Your twin is getting ready</h4><p id="twinDescription">Add income, expenses, savings and debts to build a useful financial picture.</p><button class="btn btn-outline btn-small" data-page="twin">Explore your twin →</button></article>
+          </div>
+          <article class="panel recent-panel"><div class="panel-heading"><div><h3>Recent transactions</h3><p>Your latest recorded money movements</p></div><button class="text-button" data-page="transactions">View all →</button></div><div id="recentTransactions" class="table-wrap"><div class="empty-state">No transactions yet. Add your first income or expense.</div></div></article>
+        </section>
+        <section id="page-personal" class="page"><div class="page-heading"><div><span class="eyebrow">YOUR PERSONAL SPACE</span><h1>Personal finance</h1><p>Keep your salary, household spending, savings and personal debts together.</p></div><button class="btn btn-primary" data-action="add-transaction" data-space-type="personal">＋ Add personal record</button></div><div id="personalSummary" class="metric-grid compact-grid"></div><article class="panel"><div class="panel-heading"><div><h3>Personal transactions</h3><p>Only records assigned to your personal space</p></div></div><div id="personalTransactions" class="table-wrap"></div></article></section>
+        <section id="page-business" class="page"><div class="page-heading"><div><span class="eyebrow">YOUR BUSINESS SPACE</span><h1>Business finance</h1><p>Track business revenue, operating costs and owner transfers separately.</p></div><button class="btn btn-primary" data-action="add-transaction" data-space-type="business">＋ Add business record</button></div><div class="business-callout"><span>▣</span><div><b>One account. Separate financial records.</b><p>Record each business independently. Transfers to your personal space are tracked separately and are not counted twice.</p></div></div><div id="businessSummary" class="metric-grid compact-grid"></div><article class="panel"><div class="panel-heading"><div><h3>Business transactions</h3><p>Only records assigned to your business space</p></div></div><div id="businessTransactions" class="table-wrap"></div></article></section>
+        <section id="page-transactions" class="page"><div class="page-heading"><div><span class="eyebrow">MONEY IN MOTION</span><h1>Transactions</h1><p>Record and review income, expenses and transfers.</p></div><button class="btn btn-primary" data-action="add-transaction">＋ Add transaction</button></div><article class="panel"><div class="filter-row"><input id="transactionSearch" type="search" placeholder="Search description or category"><select id="transactionSpaceFilter"><option value="all">All spaces</option><option value="personal">Personal</option><option value="business">Business</option></select><select id="transactionTypeFilter"><option value="all">All types</option><option value="income">Income</option><option value="expense">Expense</option></select></div><div id="allTransactions" class="table-wrap"></div></article></section>
+        <section id="page-budgets" class="page"><div class="page-heading"><div><span class="eyebrow">SPEND WITH INTENTION</span><h1>Budgets</h1><p>Set spending limits for your personal and business spaces.</p></div><button class="btn btn-primary" data-action="add-budget">＋ Create budget</button></div><div id="budgetList" class="cards-grid"></div></section>
+        <section id="page-goals" class="page"><div class="page-heading"><div><span class="eyebrow">MAKE PLANS REAL</span><h1>Savings & goals</h1><p>Turn important milestones into manageable steps.</p></div><button class="btn btn-primary" data-action="add-goal">＋ Create goal</button></div><div id="goalList" class="cards-grid"></div></section>
+        <section id="page-debts" class="page"><div class="page-heading"><div><span class="eyebrow">A CLEARER WAY FORWARD</span><h1>Debt manager</h1><p>Understand what you owe and plan repayments.</p></div><button class="btn btn-primary" data-action="add-debt">＋ Add debt</button></div><div id="debtList" class="cards-grid"></div></section>
+        <section id="page-assistant" class="page"><div class="page-heading"><div><span class="eyebrow">INTELLIGENCE THAT EXPLAINS</span><h1>AI financial assistant</h1><p>Ask questions about your money. Answers will be grounded in your recorded information when AI is connected.</p></div></div><div class="ai-coming panel"><div class="ai-star">✧</div><h2>Your financial thinking partner.</h2><p>The secure AI service is a later development milestone. For now, your financial records stay in your account and the dashboard calculates your actual totals.</p><div class="suggestion-chips"><span>Where does my money go?</span><span>Can I afford a purchase?</span><span>How can I save more?</span></div><div class="notice">AI answers are not yet enabled. We will connect the AI through a secure backend so no secret API key is exposed in this website.</div></div></section>
+        <section id="page-health" class="page"><div class="page-heading"><div><span class="eyebrow">SEE THE WHOLE PICTURE</span><h1>Financial health</h1><p>Your Financial Life Score is a guidance tool, not a credit score or lending decision.</p></div></div><div class="health-layout"><article class="panel health-score"><span class="eyebrow">YOUR FINANCIAL LIFE SCORE</span><div class="big-score" id="healthScore">—<small>/100</small></div><h3 id="healthLabel">Building your financial picture</h3><p id="healthExplanation">Add records to begin your assessment.</p></article><article class="panel"><h3>Score components</h3><div id="scoreBreakdown" class="score-breakdown"></div></article></div></section>
+        <section id="page-twin" class="page"><div class="page-heading"><div><span class="eyebrow">YOUR SIGNATURE PESA AI TECHNOLOGY</span><h1>Dual Financial Twin</h1><p>A model of your personal and business financial position, built from records you choose to add.</p></div></div><div class="twin-feature panel"><div class="twin-visual large"><div class="twin-orbit orbit-one"></div><div class="twin-orbit orbit-two"></div><div class="twin-core">P<span>AI</span></div></div><div><h2>Two financial worlds. One clear view.</h2><p>Your Personal Financial Twin understands household income, spending, savings and debts. Your Business Financial Twin analyses business revenue, operating costs and cash flow. They remain separate in your records, with controlled analysis across both.</p><div class="twin-pills"><span>Personal twin</span><span>Business twin</span><span>Combined intelligence</span></div><p class="muted">The first version uses your recorded transactions. Predictive modelling and AI explanations will be added in later milestones.</p></div></div></section>
+        <section id="page-simulator" class="page"><div class="page-heading"><div><span class="eyebrow">TEST A DECISION BEFORE YOU MAKE IT</span><h1>Future simulator</h1><p>Explore simple savings scenarios. Projections are estimates, not guarantees.</p></div></div><article class="panel simulator-panel"><div class="form-grid"><label>Starting savings<input type="number" id="simStart" min="0" value="0"></label><label>Monthly contribution<input type="number" id="simMonthly" min="0" value="5000"></label><label>Number of months<input type="number" id="simMonths" min="1" max="600" value="12"></label><label>Annual growth assumption (%)<input type="number" id="simRate" min="0" max="30" step=".1" value="0"></label></div><button class="btn btn-primary" id="runSimulation">Calculate scenario</button><div id="simulationResult" class="simulation-result">Enter your assumptions and calculate a scenario.</div><p class="muted tiny">This basic calculator assumes regular monthly contributions and a constant rate. It does not predict investment returns.</p></article></section>
+        <section id="page-guardian" class="page"><div class="page-heading"><div><span class="eyebrow">STAY AWARE</span><h1>Financial guardian</h1><p>Review unusual records and reminders. Alerts are prompts to check, not proof of fraud.</p></div></div><div class="business-callout"><span>⬡</span><div><b>Protection begins with good information.</b><p>Duplicate checks and anomaly detection will be expanded as more records and secure integrations become available.</p></div></div><article class="panel"><h3>Current checks</h3><div id="guardianChecks" class="check-list"></div></article></section>
+        <section id="page-reports" class="page"><div class="page-heading"><div><span class="eyebrow">YOUR FINANCIAL STORY</span><h1>Reports</h1><p>Review your recorded income, expenses and net cash flow.</p></div><button class="btn btn-outline" id="exportCsv">↓ Export CSV</button></div><article class="panel"><div id="reportSummary"></div></article></section>
+        <section id="page-settings" class="page"><div class="page-heading"><div><span class="eyebrow">YOUR ACCOUNT</span><h1>Settings</h1><p>Manage your profile and display preferences.</p></div></div><article class="panel settings-panel"><form id="settingsForm" class="form-stack"><label>Full name<input id="settingsName" type="text" required></label><label>Preferred currency<select id="settingsCurrency"><option value="KES">KES — Kenyan Shilling</option><option value="USD">USD — US Dollar</option><option value="GBP">GBP — British Pound</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option><option value="NGN">NGN — Nigerian Naira</option><option value="ZAR">ZAR — South African Rand</option></select></label><button class="btn btn-primary" type="submit">Save settings</button></form></article></section>
+      </div>
+      <footer class="app-footer">PesaAI <span>·</span> Understand. Protect. Plan. Grow. <span class="footer-right">Your financial data belongs to you.</span></footer>
+    </main>
+  </div>
+
+  <dialog id="recordDialog" class="modal"><form id="transactionForm" class="modal-card"><div class="modal-heading"><div><span class="eyebrow">MONEY IN MOTION</span><h2 id="transactionModalTitle">Add transaction</h2></div><button type="button" class="icon-btn" data-close="recordDialog">×</button></div><label>Financial space<select id="recordSpace"><option value="personal">Personal</option><option value="business">Business</option></select></label><label>Type<select id="recordType"><option value="income">Income</option><option value="expense">Expense</option></select></label><div class="form-grid"><label>Amount<input id="recordAmount" type="number" min=".01" step=".01" required></label><label>Currency<select id="recordCurrency"><option>KES</option><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option><option>AUD</option><option>NGN</option><option>ZAR</option></select></label></div><label>Description<input id="recordDescription" maxlength="160" placeholder="e.g. Salary, groceries, shop sales" required></label><div class="form-grid"><label>Category<input id="recordCategory" maxlength="60" placeholder="e.g. Food, salary, sales"></label><label>Date<input id="recordDate" type="date" required></label></div><label>Business name (business records only)<input id="recordBusiness" maxlength="100" placeholder="e.g. My shop"></label><div class="modal-actions"><button type="button" class="btn btn-outline" data-close="recordDialog">Cancel</button><button type="submit" class="btn btn-primary">Save transaction</button></div></form></dialog>
+  <dialog id="simpleDialog" class="modal"><form id="simpleForm" class="modal-card"><div class="modal-heading"><div><span class="eyebrow">FINANCIAL PLANNING</span><h2 id="simpleTitle">Create record</h2></div><button type="button" class="icon-btn" data-close="simpleDialog">×</button></div><div id="simpleFields" class="form-stack"></div><div class="modal-actions"><button type="button" class="btn btn-outline" data-close="simpleDialog">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
