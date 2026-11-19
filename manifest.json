@@ -1,0 +1,12 @@
+{
+  "name": "PesaAI — Financial Intelligence",
+  "short_name": "PesaAI",
+  "description": "Your personal and business financial intelligence companion.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f8fa",
+  "theme_color": "#071b2d",
+  "icons": [
+    { "src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
