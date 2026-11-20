@@ -24,7 +24,7 @@ $("profileAvatar").addEventListener("click",()=>$("profileMenu").classList.toggl
 document.addEventListener("click",e=>{if(!$("profileMenu").contains(e.target)&&e.target!==$("profileAvatar"))$("profileMenu").classList.add("hidden");});
 $("menuToggle").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
-function navigate(page){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));document.querySelectorAll(".nav-link").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({overview:"Overview",personal:"Personal finance",business:"Business finance",transactions:"Transactions",budgets:"Budgets",goals:"Savings & goals",debts:"Debt manager",assistant:"AI assistant",health:"Financial health",twin:"Financial twin",simulator:"Future simulator",guardian:"Financial guardian",reports:"Reports",settings:"Settings"})[page]||"Overview";$("sidebar").classList.remove("open");if(page==="health")renderScore();if(page==="reports")renderReports();if(page==="guardian")renderGuardian();}
+function navigate(page){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));document.querySelectorAll(".nav-link").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=({overview:"Overview",personal:"Personal finance",business:"Business finance",transactions:"Transactions",budgets:"Budgets",goals:"Savings & goals",debts:"Debt manager",assistant:"AI assistant",health:"Financial health",twin:"Financial twin",simulator:"Future simulator",guardian:"Financial guardian",reports:"Reports",settings:"Settings"})[page]||"Overview";$("sidebar").classList.remove("open");if(page==="health")renderScore();if(page==="reports")renderReports();if(page==="guardian")renderGuardian();if(page==="assistant"&&state.user)loadAiHistory();}
 document.querySelectorAll("[data-action]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.action;if(a==="add-transaction")openTransaction(b.dataset.spaceType||"personal");if(a==="add-budget")openSimple("budget");if(a==="add-goal")openSimple("goal");if(a==="add-debt")openSimple("debt");}));
 document.querySelectorAll("[data-space]").forEach(b=>b.addEventListener("click",()=>{state.activeSpace=b.dataset.space;document.querySelectorAll("[data-space]").forEach(x=>x.classList.toggle("active",x===b));renderDashboard();}));
 
@@ -77,9 +77,46 @@ function renderReports(){const t=totals(state.transactions);$("reportSummary").i
 $("exportCsv").addEventListener("click",()=>{const rows=[["Date","Space","Type","Description","Category","Amount","Currency"],...state.transactions.map(t=>[t.transaction_date,state.spaces.find(s=>s.id===t.space_id)?.space_type||"",t.transaction_type,t.description,t.category,t.amount,t.currency])];const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="pesaai-transactions.csv";a.click();URL.revokeObjectURL(a.href);});
 $("currencyDisplay").addEventListener("click",()=>navigate("settings"));
 
-function addAiMessage(role,content){const box=$("aiMessages");const empty=box.querySelector(".empty-state");if(empty)empty.remove();const item=document.createElement("div");item.style.cssText="margin:10px 0;padding:12px 14px;border-radius:12px;white-space:pre-wrap;line-height:1.55;background:"+(role==="user"?"#e4f2ed":"#fff")+";border:1px solid #e3eaee";const label=document.createElement("b");label.textContent=role==="user"?"You":"PesaAI";label.style.display="block";label.style.marginBottom="5px";const body=document.createElement("div");body.textContent=content;item.append(label,body);box.append(item);box.scrollTop=box.scrollHeight;}
+function addAiMessage(role,content){
+ const box=$("aiMessages");const empty=box.querySelector(".empty-state");if(empty)empty.remove();
+ const item=document.createElement("div");item.style.cssText="margin:10px 0;padding:12px 14px;border-radius:12px;white-space:pre-wrap;line-height:1.55;background:"+(role==="user"?"#e4f2ed":"#fff")+";border:1px solid #e3eaee";
+ const label=document.createElement("b");label.textContent=role==="user"?"You":"PesaAI";label.style.display="block";label.style.marginBottom="5px";
+ const body=document.createElement("div");body.textContent=content;item.append(label,body);box.append(item);box.scrollTop=box.scrollHeight;
+}
 let aiConversationId=null;
-$("aiForm").addEventListener("submit",async e=>{e.preventDefault();const question=$("aiQuestion").value.trim();if(!question)return;const button=$("aiSend");addAiMessage("user",question);$("aiQuestion").value="";setBusy(button,true,"Thinking…");try{const {data:{session},error:sessionError}=await supabase.auth.getSession();if(sessionError)throw sessionError;if(!session?.access_token)throw new Error("Please sign in again. Your Supabase session is not available.");const {data,error}=await supabase.functions.invoke("pesaai-assistant",{body:{question,space:$("aiSpace").value,conversation_id:aiConversationId},headers:{Authorization:"Bearer "+session.access_token}});if(error)throw error;if(!data?.answer)throw new Error(data?.error||"No answer returned.");aiConversationId=data.conversation_id||aiConversationId;addAiMessage("assistant",data.answer);}catch(err){let detail=err?.message||"Please try again.";try{if(err?.context instanceof Response){const body=await err.context.clone().json();detail=body?.error||body?.message||detail;}}catch{}addAiMessage("assistant","PesaAI service error: "+detail+"\n\nPlease share this exact message so we can identify the cause.");}finally{setBusy(button,false);}});
+function clearAiChat(){aiConversationId=null;$("aiMessages").innerHTML='<div class="empty-state">Start a new conversation. Ask PesaAI anything.</div>';$("aiQuestion").value="";document.querySelectorAll("[data-ai-conversation]").forEach(x=>x.classList.remove("active"));}
+async function loadAiHistory(){
+ const list=$("aiHistoryList");if(!list||!state.user)return;
+ const {data,error}=await supabase.from("pa_ai_conversations").select("id,title,updated_at,created_at").eq("user_id",state.user.id).order("updated_at",{ascending:false}).limit(30);
+ if(error){list.textContent="Chat history could not be loaded.";return;}
+ if(!data?.length){list.innerHTML='<small class="muted">Your previous chats will appear here.</small>';return;}
+ list.innerHTML=data.map(c=>'<button type="button" class="btn btn-outline" style="white-space:nowrap" data-ai-conversation="'+escapeHTML(c.id)+'">'+escapeHTML(c.title||"New conversation")+'</button>').join("");
+}
+async function openAiConversation(id){
+ const {data:conversation,error:ce}=await supabase.from("pa_ai_conversations").select("id").eq("id",id).eq("user_id",state.user.id).maybeSingle();
+ if(ce||!conversation){toast("Conversation could not be opened.",true);return;}
+ const {data,error}=await supabase.from("pa_ai_messages").select("role,content").eq("conversation_id",id).eq("user_id",state.user.id).order("created_at",{ascending:true});
+ if(error){toast(error.message,true);return;}
+ aiConversationId=id;$("aiMessages").innerHTML="";(data||[]).forEach(m=>addAiMessage(m.role,m.content));
+ if(!data?.length)$("aiMessages").innerHTML='<div class="empty-state">No messages in this conversation.</div>';
+ document.querySelectorAll("[data-ai-conversation]").forEach(x=>x.classList.toggle("active",x.dataset.aiConversation===id));
+}
+$("newAiChat").addEventListener("click",()=>{clearAiChat();$("aiQuestion").focus();});
+$("aiHistoryList").addEventListener("click",e=>{const b=e.target.closest("[data-ai-conversation]");if(b)openAiConversation(b.dataset.aiConversation);});
+$("aiForm").addEventListener("submit",async e=>{
+ e.preventDefault();const question=$("aiQuestion").value.trim();if(!question)return;
+ const button=$("aiSend");addAiMessage("user",question);$("aiQuestion").value="";setBusy(button,true,"Thinking…");
+ try{
+  const {data:{session},error:sessionError}=await supabase.auth.getSession();if(sessionError)throw sessionError;
+  if(!session?.access_token)throw new Error("Please sign in again. Your Supabase session is not available.");
+  const {data,error}=await supabase.functions.invoke("pesaai-assistant",{body:{question,space:$("aiSpace").value,conversation_id:aiConversationId},headers:{Authorization:"Bearer "+session.access_token}});
+  if(error)throw error;if(!data?.answer)throw new Error(data?.error||"No answer returned.");
+  aiConversationId=data.conversation_id||aiConversationId;addAiMessage("assistant",data.answer);await loadAiHistory();
+ }catch(err){
+  let detail=err?.message||"Please try again.";try{if(err?.context instanceof Response){const body=await err.context.clone().json();detail=body?.error||body?.message||detail;}}catch{}
+  addAiMessage("assistant","PesaAI service error: "+detail+"\\n\\nPlease share this exact message so we can identify the cause.");
+ }finally{setBusy(button,false);}
+});
 
 supabase.auth.onAuthStateChange((event,session)=>{if(session?.user){if(state.user?.id!==session.user.id)queueMicrotask(()=>boot(session.user));}else{state.user=null;showAuth();}});
 const {data:{session}}=await supabase.auth.getSession();if(session?.user)await boot(session.user);else showAuth();
