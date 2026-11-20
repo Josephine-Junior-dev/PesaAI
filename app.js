@@ -78,10 +78,16 @@ $("exportCsv").addEventListener("click",()=>{const rows=[["Date","Space","Type",
 $("currencyDisplay").addEventListener("click",()=>navigate("settings"));
 
 function addAiMessage(role,content){
- const box=$("aiMessages");const empty=box.querySelector(".empty-state");if(empty)empty.remove();
- const item=document.createElement("div");item.style.cssText="margin:10px 0;padding:12px 14px;border-radius:12px;white-space:pre-wrap;line-height:1.55;background:"+(role==="user"?"#e4f2ed":"#fff")+";border:1px solid #e3eaee";
- const label=document.createElement("b");label.textContent=role==="user"?"You":"PesaAI";label.style.display="block";label.style.marginBottom="5px";
- const body=document.createElement("div");body.textContent=content;item.append(label,body);box.append(item);box.scrollTop=box.scrollHeight;
+ const box=$("aiMessages");
+ const empty=box.querySelector(".empty-state");if(empty)empty.remove();
+ const row=document.createElement("div");row.className="ai-message-row "+(role==="user"?"ai-user-row":"ai-assistant-row");
+ const avatar=document.createElement("div");avatar.className="ai-message-avatar "+(role==="user"?"user-avatar":"assistant-avatar");avatar.textContent=role==="user"?"Y":"P";
+ const bubble=document.createElement("div");bubble.className="ai-message-bubble "+(role==="user"?"user-bubble":"assistant-bubble");
+ const label=document.createElement("div");label.className="ai-message-label";label.textContent=role==="user"?"You":"PesaAI";
+ const body=document.createElement("div");body.className="ai-message-content";body.textContent=content;
+ bubble.append(label,body);
+ if(role==="user")row.append(bubble,avatar);else row.append(avatar,bubble);
+ box.append(row);box.scrollTop=box.scrollHeight;
 }
 let aiConversationId=null;
 function clearAiChat(){aiConversationId=null;$("aiMessages").innerHTML='<div class="empty-state">Start a new conversation. Ask PesaAI anything.</div>';$("aiQuestion").value="";document.querySelectorAll("[data-ai-conversation]").forEach(x=>x.classList.remove("active"));}
